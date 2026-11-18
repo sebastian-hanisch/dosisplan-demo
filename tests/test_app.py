@@ -105,3 +105,14 @@ def test_the_hint_is_visible_in_every_view():
     for view in C.VIEWS:
         at.segmented_control(key="view_select").set_value(view).run(timeout=TIMEOUT)
         assert "Anwendungsbeispiel, keine Beratung" in _texts(at)
+
+
+def test_explainer_expanders_link_to_the_explainer_page_and_the_reading_aid_appears_once():
+    """Expander „💬 In einfachen Worten“ mit Link auf die Erklärseite; Lesehilfe im Formel-Expander mit Link auf den Fachteil, genau einmal."""
+    at = _fresh_app()
+    labels = [e.label for e in at.expander]
+    assert "💬 In einfachen Worten" in labels and "📐 Mathematische Formulierung" in labels
+    text = _texts(at)
+    assert "https://sebastianhanisch.net/dosisplan-erklaert.html)" in text and "https://sebastianhanisch.net/dosisplan-erklaert.html#fachleute)" in text
+    assert text.count("**Lesehilfe.**") == 1 and text.count("| Symbol | Bedeutung |") == 1
+    assert "Anwendungsbeispiel, keine Beratung" in at.expander[labels.index("💬 In einfachen Worten")].markdown[0].value

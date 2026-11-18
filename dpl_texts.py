@@ -14,7 +14,7 @@ In einem erfundenen 2D-Phantom (Gitter 32 × 32, ein Tumor, daneben ein Organ, 1
 Eine **Dosis-Volumen-Grenze** („höchstens k Organvoxel über der Grenzdosis d“) macht daraus eine ganzzahlige Aufgabe. Die Demo vergleicht den **exakten Strahlplan** (vorgerechnet) mit der **LP-Relaxation** und der **CVaR-Restriktion** in zwei Formen:
 Was kostet die Grenze, was ändert sie am Strahlplan, und was sehen die Ersatzformen davon?
 
-Weiter unten: der **Strahlplan** der gewählten Zelle, drei **Kernfragen**, sieben **Experimente** (Umschalter) und die Expander **🔧 Wie wir das erreichen – vollständiger Methodenvergleich**, **📐 Mathematische Formulierung** und **🚧 Wo die Annahmen enden**.
+Weiter unten: der **Strahlplan** der gewählten Zelle, drei **Kernfragen**, sieben **Experimente** (Umschalter) und die Expander **🔧 Wie wir das erreichen – vollständiger Methodenvergleich**, **📐 Mathematische Formulierung** und **🚧 Wo die Annahmen enden**. Wer es ohne Fachwörter lesen will, öffnet **💬 In einfachen Worten**.
 Gerechnet wird live nur mit linearen Programmen; die ganzzahlige Aufgabe ist **vorgerechnet** und eingefroren.
 """
 
@@ -41,11 +41,11 @@ Die Menge $S$ der Voxel mit $z_v = 1$ ist die ganze ganzzahlige Entscheidung; zu
 """
 
 METHOD_RELAX = """
-**LP-Relaxation.** Dieselbe Big-M-Form mit $z_v \\in [0, 1]$ statt $\\{0,1\\}$; sie liefert eine **untere Schranke** des exakten Werts. Eliminiert man $z$, ist sie gleichwertig zu
+**LP-Relaxation.** Dieselbe Big-M-Form mit $z_v \\in [0, 1]$ statt $\\{0,1\\}$; sie liefert eine **untere Schranke** des exakten Werts. Eliminiert man $z$, ist sie zusammen mit $D_v \\le M$ (für jedes Organvoxel $v$) gleichwertig zu
 
 $$\\sum_v \\max(0,\\; D_v - d) \\le k\\,(M - d)$$
 
-Die Relaxation erlaubt also nicht „$k$ Voxel über $d$“, sondern einen **Gesamtüberschuss** von $k\\,(M-d)$, und viele kleine Überschreitungen passen darunter. Das ist eine Identität (im Test an 20 Zeilen und auf dem Mini-Gitter geprüft), keine Messung.
+Die Relaxation erlaubt also nicht „$k$ Voxel über $d$“, sondern einen **Gesamtüberschuss** von $k\\,(M-d)$, und viele kleine Überschreitungen passen darunter. Die Gleichwertigkeit gilt nur mit $D_v \\le M$ (die Big-M-Form erzwingt es über $z_v \\le 1$); ohne diese Nebenbedingung war der Wert bei $M = 0{,}6$ in 5 von 19 geprüften Zeilen niedriger, bis zu 0,39 % (eine Handmessung beim Prüfen, nicht im Test). Mit ihr ist es eine Identität (im Test an 20 Zeilen und auf dem Mini-Gitter geprüft), keine Messung.
 Dass sie die Kosten der Grenze meist kaum sieht, ist dagegen ein Befund über dieses Phantom (Experiment 3).
 """
 
@@ -67,21 +67,6 @@ METHOD_HAND = """
 Dort hat die Relaxation denselben Wert wie der Strahlplan ohne Grenze (sie sieht nichts), CVaR(k) ist unzulässig, CVaR(k+1) kostet mehr als der exakte Strahlplan, und der Mittelpunkt zweier zulässiger Strahlpläne verletzt die Grenze.
 """
 
-MATH_HEAD = """
-**Gegeben:** die Dosismatrix $A$ (Voxel × Strahlen), die Tumor- und Organvoxel, das Tumorfenster, die Organ-Höchstdosis $M$, die Grenzdosis $d$ und die erlaubte Zahl $k$. **Gesucht:** Strahlgewichte $x \\ge 0$ und die Menge der Organvoxel, die über $d$ liegen dürfen.
-
-| Symbol | Bedeutung |
-|---|---|
-| $x_j \\ge 0$ | Gewicht des Strahls $j$ (192 Strahlen) |
-| $D = A x$ | Dosis je Voxel (einheitenlos, relativ zur Tumor-Solldosis 1) |
-| $T$, $O$, $N$ | Menge der Tumor-, Organ- und gesunden Voxel; „Nicht-Tumor“ ist $O \\cup N$ |
-| $c_j$ | mittlere Dosis, die der Strahl $j$ je Einheit Gewicht in allen Nicht-Tumor-Voxeln erzeugt |
-| $M$ | Organ-Höchstdosis (1,2, 1,0, 0,8 oder 0,6), zugleich Big-M |
-| $d$, $k$ | Grenzdosis und erlaubte Zahl von Organvoxeln über $d$ |
-| $z_v$ | 1, wenn das Organvoxel $v$ über $d$ liegen darf |
-| $\\zeta$, $w_v$ | Hilfsgrößen der CVaR-Restriktion (Rockafellar und Uryasev) |
-"""
-
 MATH_MODEL = [
     r"\min_{x \ge 0,\, z}\; c^{\top} x \qquad c_j = \frac{1}{|O \cup N|}\sum_{v \in O \cup N} A_{vj}",
     r"1 \le (A x)_v \le 1{,}2 \quad (v \in T)",
@@ -101,6 +86,6 @@ BOUNDARIES = """
   Verfeinerungen der CVaR-Restriktion (Ausreißer-Ausschluss bei Kishimoto und Yamashita, Zwei-Pass bei Fu u. a.); andere Schwanzgrößen als k und k + 1; mehr als drei Kombinationen (d; Anteil); ein Tumor, ein Organ; μ und Streukern fest. Eine „bessere Schranke“ ist damit **nicht ausgeschlossen**.
 - **Auswahl der Einstrahlwinkel** ist eine eigene Aufgabe (Auswahl aus Kandidaten) und steht nicht in dieser Demo: [aufloesung-messorte-demo](https://github.com/sebastian-hanisch/aufloesung-messorte-demo) zeigt sie an anderem Vehikel. Ein zusätzlicher Winkel verschlechtert den Wert nie (im Test an 24 Proben geprüft).
 - **Zielkonflikt und Schattenpreis** (Ansicht 0) sind Lehrsatz der LP-Theorie und stehen ausführlich in [lp-dualitaet-demo](https://github.com/sebastian-hanisch/lp-dualitaet-demo) und `zwei-kriterien-demo`; `hart-gegen-weich-demo` zeigt harte gegen weiche Grenzen.
-- **Verwandt, aber anders:** [scenario-approach-demo](https://github.com/sebastian-hanisch/scenario-approach-demo) schließt das Verwerfen von Szenarien als ganzzahliges Problem aus; die Dosis-Volumen-Grenze ist diese Aufgabe mit Voxeln als Szenarien. [cvar-demo](https://github.com/sebastian-hanisch/cvar-demo) nutzt CVaR als Ziel, hier ist es eine Restriktion.
+- **Verwandt, aber anders:** [scenario-approach-demo](https://github.com/sebastian-hanisch/scenario-approach-demo) setzt das Verwerfen von Szenarien, ein ganzzahliges Problem, bewusst nicht um; die Dosis-Volumen-Grenze entspricht dieser Aufgabe mit Voxeln als Szenarien (Deutung dieser Demo). [cvar-demo](https://github.com/sebastian-hanisch/cvar-demo) nutzt CVaR als Ziel, hier ist es eine Restriktion.
 - **Literatur.** Die Näherung der Dosis-Volumen-Grenze durch das Mittel der heißesten Voxel (CVaR, Rockafellar und Uryasev 2000, 2002) wird seit Romeijn u. a. (2003, 2006) für die Fluenzoptimierung genannt (nach Kishimoto und Yamashita 2018; Engberg u. a. 2017; die Texte von Romeijn u. a. sind hier nicht gelesen); die Variante mit k + 1 heißesten Voxeln ist hier eine eigene Ableitung. Für die Größe der Lücken gibt es in den gelesenen Quellen keine Vergleichszahlen; die Zahlen sind eigene Messungen.
 """

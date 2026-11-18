@@ -107,6 +107,19 @@ st.html(kopf_css(dunkles_design()))
 with st.container(key="kopf"):
     st.title("🩻 Dosisplanung: Dosis-Volumen-Grenze")
 st.markdown(T.INTRO)
+
+# erklaerseite:einfach:start (erzeugt von tools/set_demo_explainer.py (Website-Repo) aus tools/content/explainers/dosisplan-erklaert.json, nicht von Hand ändern)
+with st.expander("💬 In einfachen Worten"):
+    st.markdown(
+        """
+Mehrere Strahlen aus verschiedenen Richtungen treffen eine erfundene Scheibe. In ihr liegen ein Tumor, der eine bestimmte Dosis bekommen muss, und daneben ein Organ, das möglichst wenig abbekommen soll. Die Dosis-Volumen-Grenze erlaubt, dass nur eine begrenzte Zahl von Organstellen über einer Schwelle liegt. Diese Zählregel verändert die Aufgabe: Welche Stellen die Ausnahmen sind, muss man erst auswählen.
+
+Die App vergleicht das exakte Ergebnis, das vorab gerechnet wurde, mit der Relaxation, die statt zu zählen einen Gesamtüberschuss erlaubt, und mit der CVaR-Restriktion, die mehr verlangt als nötig. Alles ist erfunden und stark vereinfacht: Anwendungsbeispiel, keine Beratung, kein klinischer Anspruch.
+
+[Ausführlich und verständlich erklärt, mit Fachteil](https://sebastianhanisch.net/dosisplan-erklaert.html)
+        """
+    )
+# erklaerseite:einfach:end
 st.caption("🔗 Die Adresszeile oben spiegelt Ihre aktuelle Konfiguration wider – einfach kopieren, um ein Szenario zu teilen.")
 
 load_permalink_settings()
@@ -360,7 +373,26 @@ with st.expander("🔧 Wie wir das erreichen – vollständiger Methodenvergleic
         st.markdown(T.METHOD_HAND)
 
 with st.expander("📐 Mathematische Formulierung"):
-    st.markdown(T.MATH_HEAD)
+    # erklaerseite:lesehilfe:start (erzeugt von tools/set_demo_explainer.py (Website-Repo) aus tools/content/explainers/dosisplan-erklaert.json, nicht von Hand ändern)
+    st.markdown(
+        r"""
+**Lesehilfe.** Gegeben sind die Dosismatrix $A$ (Voxel × Strahlen), die Tumor- und Organvoxel, das Tumorfenster, die Organ-Höchstdosis $M$, die Grenzdosis $d$ und die erlaubte Zahl $k$. Gesucht sind Strahlgewichte $x \ge 0$ und die Menge der Organvoxel, die über $d$ liegen dürfen. Die drei Zeilen sind das exakte Modell: Zielgröße, Tumorfenster und Dosis-Volumen-Grenze.
+
+| Symbol | Bedeutung |
+|---|---|
+| $x_j \ge 0$ | Gewicht des Strahls $j$ (192 Strahlen) |
+| $D = A x$ | Dosis je Voxel (einheitenlos, relativ zur Tumor-Solldosis 1) |
+| $T$, $O$, $N$ | Menge der Tumor-, Organ- und gesunden Voxel; „Nicht-Tumor“ ist $O \cup N$ |
+| $c_j$ | mittlere Dosis, die der Strahl $j$ je Einheit Gewicht in allen Nicht-Tumor-Voxeln erzeugt |
+| $M$ | Organ-Höchstdosis (1,2, 1,0, 0,8 oder 0,6), zugleich Big-M |
+| $d$, $k$ | Grenzdosis und erlaubte Zahl von Organvoxeln über $d$ |
+| $z_v$ | 1, wenn das Organvoxel $v$ über $d$ liegen darf |
+| $\zeta$, $w_v$ | Hilfsgrößen der CVaR-Restriktion (Rockafellar und Uryasev) |
+
+[Schritt für Schritt erklärt, mit Herleitung und Literatur](https://sebastianhanisch.net/dosisplan-erklaert.html#fachleute)
+        """
+    )
+    # erklaerseite:lesehilfe:end
     for line in T.MATH_MODEL:
         st.latex(line)
     st.markdown(T.MATH_NOTE)
