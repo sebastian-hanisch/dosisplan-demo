@@ -27,7 +27,7 @@ def test_organ_with_exactly_k_voxels_and_k_larger_than_the_organ(mini_h3):
     free = p.solve_free().f
     assert p.solve_mip(0.3, p.n_o).f == pytest.approx(free, abs=1e-8)             # k = Zahl der Organvoxel: die Grenze ist leer
     assert p.solve_mip(0.3, p.n_o + 4).f == pytest.approx(free, abs=1e-8)
-    assert not p.solve_cvar(0.3, p.n_o + 1).feasible                              # Schwanzgröße über der Organgröße ist nicht definiert: gemeldet, nicht gerechnet
+    assert not p.solve_cvar(0.3, p.n_o + 1).feasible                              # Tail-Größe über der Organgröße ist nicht definiert: gemeldet, nicht gerechnet
     # m = n_o: das Mittel aller Organdosen darf höchstens d sein; zulässig genau dann, wenn die kleinste mögliche mittlere Organdosis (eigenes LP) <= d ist
     n_x = p.n_x
     a_ub = np.vstack([-p.at, p.at])

@@ -54,7 +54,7 @@ def test_renumbering_the_beams_does_not_change_the_values():
 
 
 def test_values_do_not_increase_when_k_grows():
-    """Exakt, Relaxation und CVaR(k+1) fallen oder bleiben gleich, wenn k wächst; die CVaR-Form mit Schwanzgröße k ebenfalls (Mittel der k größten Dosen fällt mit k)."""
+    """Exakt, Relaxation und CVaR(k+1) fallen oder bleiben gleich, wenn k wächst; die CVaR-Form mit Tail-Größe k ebenfalls (Mittel der k größten Dosen fällt mit k)."""
     for p in _instances(10):
         prev = {}
         for k in range(1, p.n_o):
