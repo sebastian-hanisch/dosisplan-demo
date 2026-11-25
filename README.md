@@ -1,7 +1,6 @@
 # Dosisplanung: Dosis-Volumen-Grenze – Streamlit-Demo
 
-<!-- TODO nach dem Deploy: direkt hierher den Live-Link setzen (Leerzeile davor und danach):
-**[→ Demo live ausprobieren](https://sebastianhanisch-dosisplan-demo.streamlit.app/)** -->
+**[→ Demo live ausprobieren](https://sebastianhanisch-dosisplan-demo.streamlit.app/)**
 
 **Anwendungsbeispiel, keine Beratung.** Erfundenes Phantom, vereinfachte Strahlenphysik (Lehrbuchannahmen), Dosis einheitenlos (relativ zur Tumor-Solldosis 1; die Literatur rechnet in Gray und Volumenanteilen). Kein klinischer Anspruch: nichts hier ist eine Behandlungs-, Diagnose- oder Planungsempfehlung.
 

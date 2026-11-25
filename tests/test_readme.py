@@ -59,9 +59,9 @@ def test_readme_does_not_call_the_website_integration_open():
     assert not re.search(r"Einbindung[^.\n]*offen", README) and "geplant" not in README
 
 
-def test_readme_only_todo_is_the_live_link_marker():
-    todos = [ln for ln in README.splitlines() if "TODO" in ln]
-    assert len(todos) == 1 and "Live-Link" in todos[0]
+def test_readme_has_the_live_link_and_no_todo():
+    assert README.splitlines().count("**[→ Demo live ausprobieren](https://sebastianhanisch-dosisplan-demo.streamlit.app/)**") == 1
+    assert "TODO" not in README
 
 
 def test_every_named_test_file_and_data_file_exists():
